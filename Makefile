@@ -27,21 +27,21 @@ CC=gcc
 CC_WIN32=i686-w64-mingw32-gcc
 CC_WIN64=x86_64-w64-mingw32-gcc
 
-CFLAGS_COMMON=-O3 -flto=auto -c -I$(SRC_PREFIX)/pub -DIEEE_FLOAT -D_FILE_OFFSET_BITS=64
+CFLAGS_COMMON=-O3 -c -I$(SRC_PREFIX)/pub -DIEEE_FLOAT -D_FILE_OFFSET_BITS=64
 CFLAGS_REL=$(CFLAGS_COMMON)
 CFLAGS_REL_WIN32=-march=pentium3 -mtune=pentium3 -mfpmath=sse $(CFLAGS_COMMON)
 CFLAGS_REL_WIN64=-march=x86-64 $(CFLAGS_COMMON)
 
-CFLAGS_DEB=-g -O0 -flto=auto -DDEBUG -c -I$(SRC_PREFIX)/pub -DIEEE_FLOAT -D_FILE_OFFSET_BITS=64
+CFLAGS_DEB=-g -O0 -DDEBUG -c -I$(SRC_PREFIX)/pub -DIEEE_FLOAT -D_FILE_OFFSET_BITS=64
 CFLAGS_PRF=$(CFLAGS_REL) -g -pg
-LFLAGS=-lm -lstdc++ -flto=auto
+LFLAGS=-lm -lstdc++
 LFLAGS_MINGW=-lstdc++ -static
 
 AR=ar
 
 # source files for encoder library within SRC_PREFIX
 SRC_LIB_C=amodini2.c cnts.c detect.c emap.c l3init.c l3pack.c mhead.c pcmhpm.c setup.c spdsmr.c xhead.c cnt.c emdct.c filter2.c hwin.c l3math.c pow34.c sbt.c xhwin.c xsbt.c
-SRC_LIB_CPP=bitallo.cpp bitallo1.cpp bitallo3.cpp bitalloc.cpp bitallos.cpp bitallosc.cpp mp3enc.cpp srcc.cpp srccf.cpp
+SRC_LIB_CPP=bitallo.cpp bitallo1.cpp bitallo3.cpp bitalloc.cpp bitallos.cpp bitallosc.cpp mp3enc.cpp srcc.cpp srccf.cpp hmp3_api.cpp
 
 # source files for encoder application
 SRC_APP=test/tomp3.cpp
@@ -81,8 +81,8 @@ $(DIR_REL)/%.o: $(SRC_PREFIX)/%.c
 $(DIR_REL)/%.o: $(SRC_PREFIX)/%.cpp
 	$(CC) $(CFLAGS_REL) -o $@ $<
 
-$(DIR_REL)/$(ALIB): $(OBJS_LIB_REL)
-	$(AR) rcs $@ $^
+$(DIR_REL)/$(ALIB): prep $(OBJS_LIB_REL)
+	$(AR) rcs $@ $(OBJS_LIB_REL)
 
 $(DIR_REL)/$(EXE_REL): $(OBJS_LIB_REL) $(OBJS_APP_REL)
 	$(CC) -o $@ $^ $(LFLAGS)
@@ -118,7 +118,9 @@ $(DIR_PRF)/$(EXE_PRF): $(OBJS_LIB_PRF) $(OBJS_APP_PRF)
 
 
 prep:
-	@mkdir -p $(DIR_REL)/test $(DIR_DEB)/test $(DIR_PRF)/test
+	@cmd /c "if not exist \"$(DIR_REL)/test\" mkdir \"$(DIR_REL)/test\""
+	@cmd /c "if not exist \"$(DIR_DEB)/test\" mkdir \"$(DIR_DEB)/test\""
+	@cmd /c "if not exist \"$(DIR_PRF)/test\" mkdir \"$(DIR_PRF)/test\""
 
 clean:
 	@rm -rf $(DIR_BUILDS)

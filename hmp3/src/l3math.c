@@ -37,6 +37,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <float.h>
 #include <math.h>
 #include <assert.h>
@@ -132,7 +133,7 @@ align16 ( float *x )
 {
     float *y;
 
-    y = ( float * ) ( ( ( ( int ) x ) + 15 ) & ( ~15 ) );
+    y = ( float * ) ( ( ( ( uintptr_t ) x ) + 15 ) & ( ~15 ) );
 
     return y;
 }

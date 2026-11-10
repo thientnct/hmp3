@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: hmp3
+Description: Helix MP3 encoder library
+Version: @VERSION@
+Libs: -L${libdir} -lhmp3 -lstdc++ -lm
+Cflags: -I${includedir} -I${includedir}/hmp3
